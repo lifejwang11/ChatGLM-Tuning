@@ -1,13 +1,13 @@
 #!/bin/bash
 python3 finetune.py \
-    --dataset_path data/alpaca1 \
+    --dataset_path data3/alpaca1 \
     --lora_rank 8 \
-    --per_device_train_batch_size 16 \
+    --per_device_train_batch_size 8 \
     --gradient_accumulation_steps 2 \
-    --max_steps 150 \
-    --save_steps 50 \
+    --max_steps 1000 \
+    --save_steps 500 \
     --save_total_limit 2 \
-    --learning_rate 2e-4 \
+    --learning_rate 2e-3 \
     --fp16 \
     --remove_unused_columns false \
     --logging_steps 50 \

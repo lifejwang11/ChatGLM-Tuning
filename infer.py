@@ -26,44 +26,9 @@ tokenizer = AutoTokenizer.from_pretrained("/home/life/.cache/huggingface/hub/mod
 
 instructions = [
     {
-        "instruction": "Who are you?",
+        "instruction": "你好",
         "input": "",
-        "output": "I am life."
-    },
-    {
-        "instruction": "What is your name?",
-        "input": "",
-        "output": "I am life."
-    },
-    {
-        "instruction": "你是谁？",
-        "input": "",
-        "output": "我是life。"
-    },
-    {
-        "instruction": "你的名字是什么？",
-        "input": "",
-        "output": "我的名字是life。"
-    },
-    {
-        "instruction": "请问您是哪位？",
-        "input": "",
-        "output": "我是life。"
-    },
-    {
-        "instruction": "你怎么称呼？",
-        "input": "",
-        "output": "我是life。"
-    },
-    {
-        "instruction": "你叫什么名字？",
-        "input": "",
-        "output": "我是life。"
-    },
-    {
-        "instruction": "习近平是谁",
-        "input": "",
-        "output": "我是life。"
+        "output": "你好"
     }
 ]
 with torch.no_grad():
@@ -71,14 +36,15 @@ with torch.no_grad():
         feature = format_example(item)
         input_text = feature['context']
         ids = tokenizer.encode(input_text)
-        input_ids = torch.LongTensor([ids]).to(device)
-        out = model.generate(
-            input_ids=input_ids,
-            max_length=150,
-            do_sample=False,
-            temperature=0
-        )
-        out_text = tokenizer.decode(out[0])
-        answer = out_text.replace(input_text, "").replace("\nEND", "").strip()
-        item['infer_answer'] = answer
-        print(out_text)
+        # input_ids = torch.LongTensor([ids]).to(device)
+        current_length = 0
+        past_key_values, history = None, []
+        for response, history, past_key_values in model.stream_chat(tokenizer, input_text, history=history,
+                                                                    past_key_values=past_key_values,
+                                                                    return_past_key_values=True):
+  
+            print(response[current_length:], end="", flush=True)
+            # print(history)
+            current_length = len(response)
+
+        print("")
